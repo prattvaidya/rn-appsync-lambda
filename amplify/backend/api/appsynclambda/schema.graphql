@@ -1,0 +1,19 @@
+type Post @model(queries: null) {
+  id: ID!
+  title: String!
+  content: String
+  post_status: POST_STATUS!
+  comments: [Comment] @connection(keyName: "byPost", fields: ["id"])
+}
+
+type Comment @model(queries: null) @key(name: "byPost", fields: ["postID"]) {
+  id: ID!
+  content: String!
+  postID: ID!
+  post: Post @connection(fields: ["postID"])
+}
+
+enum POST_STATUS {
+  draft
+  published
+}
