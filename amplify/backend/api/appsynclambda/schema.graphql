@@ -1,0 +1,5 @@
+type Record @model {
+  id: ID!
+  productId: Int!
+  count: Int!
+}
