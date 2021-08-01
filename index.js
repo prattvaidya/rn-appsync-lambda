@@ -10,5 +10,9 @@
 import App from "./app/app.tsx"
 import { AppRegistry } from "react-native"
 
+import Amplify from 'aws-amplify'
+import config from './src/aws-exports'
+Amplify.configure(config)
+
 AppRegistry.registerComponent("AppSyncLambda", () => App)
 export default App
