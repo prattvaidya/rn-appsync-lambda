@@ -27,7 +27,6 @@
     "clean-all": "npx react-native clean-project-auto"
   },
   "dependencies": {
-    "@aws-amplify/datastore": "^3.3.0",
     "@react-native-async-storage/async-storage": "^1.15.5",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "^6.0.0",
