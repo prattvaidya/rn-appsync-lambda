@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
+    "ios": "react-native run-ios",
     "test:e2e": "detox test -c ios.sim.debug",
     "build:e2e": "detox build -c ios.sim.debug",
     "ci:test:e2e": "detox test -c ios.sim.release -l verbose --cleanup",
@@ -26,6 +27,7 @@
     "clean-all": "npx react-native clean-project-auto"
   },
   "dependencies": {
+    "@aws-amplify/datastore": "^3.3.0",
     "@react-native-async-storage/async-storage": "^1.15.5",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "^6.0.0",
