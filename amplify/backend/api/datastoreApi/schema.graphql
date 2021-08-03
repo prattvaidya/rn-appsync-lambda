@@ -146,13 +146,13 @@ type Query {
     limit: Int
     nextToken: String
     lastSync: AWSTimestamp
-  ): ModelPostConnection @function(name: "datastoreLink-${env}")
+  ): ModelPostConnection @function(name: "dataStoreLink-${env}")
   syncComments(
     filter: ModelCommentFilterInput
     limit: Int
     nextToken: String
     lastSync: AWSTimestamp
-  ): ModelCommentConnection @function(name: "datastoreLink-${env}")
+  ): ModelCommentConnection @function(name: "dataStoreLink-${env}")
 }
 
 input CreatePostInput {
@@ -178,17 +178,17 @@ input DeletePostInput {
 
 type Mutation {
   createPost(input: CreatePostInput!, condition: ModelPostConditionInput): Post
-    @function(name: "datastoreLink-${env}")
+    @function(name: "dataStoreLink-${env}")
   updatePost(input: UpdatePostInput!, condition: ModelPostConditionInput): Post
-    @function(name: "datastoreLink-${env}")
+    @function(name: "dataStoreLink-${env}")
   deletePost(input: DeletePostInput!, condition: ModelPostConditionInput): Post
-    @function(name: "datastoreLink-${env}")
+    @function(name: "dataStoreLink-${env}")
   createComment(input: CreateCommentInput!, condition: ModelCommentConditionInput): Comment
-    @function(name: "datastoreLink-${env}")
+    @function(name: "dataStoreLink-${env}")
   updateComment(input: UpdateCommentInput!, condition: ModelCommentConditionInput): Comment
-    @function(name: "datastoreLink-${env}")
+    @function(name: "dataStoreLink-${env}")
   deleteComment(input: DeleteCommentInput!, condition: ModelCommentConditionInput): Comment
-    @function(name: "datastoreLink-${env}")
+    @function(name: "dataStoreLink-${env}")
 }
 
 input ModelPostConditionInput {
