@@ -10,6 +10,18 @@
       "StackName": "amplify-rnappsynclambda-dev-130749",
       "StackId": "arn:aws:cloudformation:us-east-1:721553173879:stack/amplify-rnappsynclambda-dev-130749/7bd21790-f496-11eb-a522-0a70beb84243",
       "AmplifyAppId": "d3mloiqt89rqa5"
+    },
+    "categories": {
+      "function": {
+        "dataStoreLink": {
+          "deploymentBucketName": "amplify-rnappsynclambda-dev-130749-deployment",
+          "s3Key": "amplify-builds/dataStoreLink-4462504c42535332564e-build.zip"
+        },
+        "rnappsynclambdamysql2": {
+          "deploymentBucketName": "amplify-rnappsynclambda-dev-130749-deployment",
+          "s3Key": "amplify-builds/rnappsynclambdamysql2-LambdaLayerVersion29a4062a-build.zip"
+        }
+      }
     }
   }
 }
