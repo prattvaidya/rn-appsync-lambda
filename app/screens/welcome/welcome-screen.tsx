@@ -1,7 +1,9 @@
-import React from "react"
-import { View, ViewStyle, TextStyle, ImageStyle, SafeAreaView } from "react-native"
+import React, { useEffect, useState } from "react"
+import { View, ViewStyle, TextStyle, ImageStyle, SafeAreaView, Alert } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
+import { DataStore, Hub } from "aws-amplify"
+import { Post, PostStatus } from "../../../src/models"
 import { Button, Header, Screen, Text, Wallpaper, AutoImage as Image } from "../../components"
 import { color, spacing, typography } from "../../theme"
 const bowserLogo = require("./bowser.png")
@@ -32,6 +34,7 @@ const HEADER_TITLE: TextStyle = {
 const TITLE_WRAPPER: TextStyle = {
   ...TEXT,
   textAlign: "center",
+  marginBottom: 10,
 }
 const TITLE: TextStyle = {
   ...TEXT,
@@ -64,6 +67,7 @@ const CONTINUE: ViewStyle = {
   paddingVertical: spacing[4],
   paddingHorizontal: spacing[4],
   backgroundColor: color.palette.deepPurple,
+  marginVertical: 5,
 }
 const CONTINUE_TEXT: TextStyle = {
   ...TEXT,
@@ -77,32 +81,78 @@ const FOOTER_CONTENT: ViewStyle = {
   paddingHorizontal: spacing[4],
 }
 
+const STATUS_STYLE = { marginBottom: 5 }
+
 export const WelcomeScreen = observer(function WelcomeScreen() {
   const navigation = useNavigation()
-  const nextScreen = () => {
-    console.log("yello")
+  const nextScreen = async () => {
+    try {
+      await DataStore.save(
+        new Post({
+          title: "My First Post",
+          post_status: PostStatus.PUBLISHED,
+          content: "First Post content",
+        }),
+      ).catch((err) => console.log("DataStore.save err", err))
+
+      console.log("sweet, done!")
+      Alert.alert("Post added")
+
+      // const posts = await DataStore.query(Post)
+      // console.log("Posts", JSON.stringify(posts, null, 2))
+    } catch (error) {
+      console.log("Posts Error", error)
+    }
   }
+
+  const forceSync = () => {
+    DataStore.start()
+  }
+
+  const clearDataStore = () => {
+    DataStore.clear()
+    Alert.alert("DataStore cleared")
+  }
+
+  enum STATUS {
+    PENDING,
+    ONGOING,
+    COMPLETE,
+  }
+  const [status, setStatus] = useState<STATUS>(null)
+  const [log, setLog] = useState(null)
+
+  useEffect(() => {
+    const listener = Hub.listen("datastore", (hubData) => {
+      console.log(hubData)
+      setLog(hubData)
+      const { event, data } = hubData.payload
+      switch (event) {
+        case "syncQueriesStarted":
+          setStatus(STATUS.ONGOING)
+          break
+
+        case "outboxStatus":
+          setStatus(data.isEmpty ? STATUS.COMPLETE : STATUS.PENDING)
+          break
+
+        default:
+          break
+      }
+    })
+    return () => {
+      Hub.remove("datastore", listener)
+    }
+  }, [])
 
   return (
     <View testID="WelcomeScreen" style={FULL}>
-      <Wallpaper />
       <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
-        <Header headerTx="welcomeScreen.poweredBy" style={HEADER} titleStyle={HEADER_TITLE} />
         <Text style={TITLE_WRAPPER}>
-          <Text style={TITLE} text="Your new app, " />
-          <Text style={ALMOST} text="almost" />
-          <Text style={TITLE} text="!" />
+          <Text style={TITLE} text="AppSync + Lambda Demo" />
         </Text>
-        <Text style={TITLE} preset="header" tx="welcomeScreen.readyForLaunch" />
-        <Image source={bowserLogo} style={BOWSER} />
-        <Text style={CONTENT}>
-          This probably isn't what your app is going to look like. Unless your designer handed you
-          this screen and, in that case, congrats! You're ready to ship.
-        </Text>
-        <Text style={CONTENT}>
-          For everyone else, this is where you'll see a live preview of your fully functioning app
-          using Ignite.
-        </Text>
+        <Text style={STATUS_STYLE}>STATUS: {STATUS[status]}</Text>
+        <Text>LOG: {JSON.stringify(log, null, 2)}</Text>
       </Screen>
       <SafeAreaView style={FOOTER}>
         <View style={FOOTER_CONTENT}>
@@ -110,8 +160,22 @@ export const WelcomeScreen = observer(function WelcomeScreen() {
             testID="next-screen-button"
             style={CONTINUE}
             textStyle={CONTINUE_TEXT}
-            tx="welcomeScreen.continue"
+            text="Add Post"
             onPress={nextScreen}
+          />
+          <Button
+            testID="force-sync-button"
+            style={CONTINUE}
+            textStyle={CONTINUE_TEXT}
+            text="Force Sync"
+            onPress={forceSync}
+          />
+          <Button
+            testID="clear-datastore-button"
+            style={CONTINUE}
+            textStyle={CONTINUE_TEXT}
+            text="Clear DataStore"
+            onPress={clearDataStore}
           />
         </View>
       </SafeAreaView>
